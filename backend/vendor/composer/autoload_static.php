@@ -14,8 +14,10 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '2203a247e6fda86070a5e4e07aed533a' => __DIR__ . '/..' . '/symfony/clock/Resources/now.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
 
@@ -35,6 +37,7 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
+            'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\TypeInfo\\' => 27,
             'Symfony\\Component\\String\\' => 25,
             'Symfony\\Component\\Stopwatch\\' => 28,
@@ -54,7 +57,9 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\ErrorHandler\\' => 31,
             'Symfony\\Component\\Dotenv\\' => 25,
+            'Symfony\\Component\\DomCrawler\\' => 29,
             'Symfony\\Component\\DependencyInjection\\' => 38,
+            'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Config\\' => 25,
             'Symfony\\Component\\Clock\\' => 24,
@@ -67,6 +72,8 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         'P' => 
         array (
             'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Psr\\Clock\\' => 10,
@@ -77,11 +84,21 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         array (
             'Nelmio\\CorsBundle\\' => 18,
         ),
+        'M' => 
+        array (
+            'Masterminds\\' => 12,
+        ),
         'L' => 
         array (
             'Lexik\\Bundle\\JWTAuthenticationBundle\\' => 37,
             'Lcobucci\\JWT\\' => 13,
             'Lcobucci\\Clock\\' => 15,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
         ),
         'D' => 
         array (
@@ -161,6 +178,10 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
+        'Symfony\\Component\\Validator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/validator',
+        ),
         'Symfony\\Component\\TypeInfo\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/type-info',
@@ -237,9 +258,17 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         array (
             0 => __DIR__ . '/..' . '/symfony/dotenv',
         ),
+        'Symfony\\Component\\DomCrawler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/dom-crawler',
+        ),
         'Symfony\\Component\\DependencyInjection\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/dependency-injection',
+        ),
+        'Symfony\\Component\\CssSelector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
         'Symfony\\Component\\Console\\' => 
         array (
@@ -277,6 +306,15 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
         'Psr\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
@@ -301,6 +339,10 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         array (
             0 => __DIR__ . '/..' . '/nelmio/cors-bundle',
         ),
+        'Masterminds\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/masterminds/html5/src',
+        ),
         'Lexik\\Bundle\\JWTAuthenticationBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/lexik/jwt-authentication-bundle',
@@ -312,6 +354,18 @@ class ComposerStaticInit10aa6627e36b8069bed16da231ae4d7f
         'Lcobucci\\Clock\\' => 
         array (
             0 => __DIR__ . '/..' . '/lcobucci/clock/src',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
         'Doctrine\\SqlFormatter\\' => 
         array (

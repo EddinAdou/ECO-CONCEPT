@@ -23,7 +23,7 @@ class SignupController extends AbstractController
     {
     }
 
-    #[Route('/signup', name: 'app_signup')]
+    #[Route('/api/signup', name: 'api_signup', methods: ['POST'])]
     public function index(Request $request): Response
     {
         $decoded = json_decode($request->getContent());

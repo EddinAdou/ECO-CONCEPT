@@ -4,5 +4,13 @@ controllers:
         namespace: App\Controller
     type: attribute
 api_login:
-    path: /login
+    path: /api/login
     methods: POST
+api_signup:
+    path: /api/signup
+    controller: App\Controller\SignupController::index
+    methods: POST
+api_analyse:
+    path: /api/analyze
+    controller: App\Controller\AnalyseController::analyse
+    methods: [GET, POST]
