@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Tests and Build
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: eco-concept_test
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+      # 1. Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # 2. Set up Node.js for frontend
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      # 3. Install Dependencies for React Frontend
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
+
+      # 4. Run React Tests
+      - name: Run React Tests
+        working-directory: frontend
+        run: npm test -- --coverage
+
+      # 5. Build React App
+      - name: Build React App
+        working-directory: frontend
+        run: npm run build
+
+      # 6. Set up PHP for Symfony Backend
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: xdebug
+
+      # 7. Install Composer Dependencies for Symfony
+      - name: Install Composer Dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist
+
+      # 8. Set environment variables for Symfony tests
+      - name: Set Environment Variables for Symfony Tests
+        run: |
+          echo "APP_ENV=test" >> $GITHUB_ENV
+          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/eco-concept_test?serverVersion=10.11.2-MariaDB&charset=utf8mb4" >> $GITHUB_ENV
+
+      # 9. Run Symfony Migrations for the Test Database
+      - name: Run Symfony Migrations
+        working-directory: backend
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/eco-concept_test?serverVersion=10.11.2-MariaDB&charset=utf8mb4
+        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+
+      # 10. Run PHPUnit Tests for Symfony
+      - name: Run PHPUnit Tests
+        working-directory: backend
+        run: ./vendor/bin/phpunit --coverage-text
