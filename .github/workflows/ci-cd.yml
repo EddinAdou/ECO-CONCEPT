@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
+      mariadb:
         image: mariadb:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: eco-concept_test
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: eco-concept_test
+          MARIADB_USER: root
+          MARIADB_PASSWORD: root
         ports:
           - 3306:3306
         options: >-
@@ -28,34 +28,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
-        command: >
-          bash -c "
-          if [ ! -d /var/lib/mysql/mysql ]; then
-            echo 'Initializing database';
-            mysqld --initialize-insecure;
-            mysqld --skip-networking &
-            pid=\$!;
-            mysql=( mysql --protocol=socket -uroot );
-            for i in {30..0}; do
-              if echo 'SELECT 1' | \"\${mysql[@]}\" &> /dev/null; then
-                break;
-              fi;
-              echo 'MySQL init process in progress...';
-              sleep 1;
-            done;
-            if [ \$i = 0 ]; then
-              echo >&2 'MySQL init process failed.';
-              exit 1;
-            fi;
-            echo 'CREATE DATABASE IF NOT EXISTS \`eco-concept_test\` ;' | \"\${mysql[@]}\";
-            echo 'CREATE USER IF NOT EXISTS '\''root'\''@'\''%'\'' IDENTIFIED BY '\''root'\'' ;' | \"\${mysql[@]}\";
-            echo 'GRANT ALL ON \`eco-concept_test\`.* TO '\''root'\''@'\''%'\'' ;' | \"\${mysql[@]}\";
-            echo 'FLUSH PRIVILEGES ;' | \"\${mysql[@]}\";
-            kill \$pid;
-            wait \$pid;
-          fi;
-          exec mysqld;
-          "
 
     steps:
       - name: Checkout Code
@@ -88,6 +60,27 @@ jobs:
       - name: Install Composer Dependencies
         working-directory: backend
         run: composer install --no-interaction --prefer-dist
+
+      - name: Wait for MariaDB
+        run: |
+          for i in {30..0}; do
+            if mysqladmin ping -h127.0.0.1 --silent; then
+              break
+            fi
+            echo 'Waiting for MariaDB...'
+            sleep 1
+          done
+          if [ "$i" = 0 ]; then
+            echo >&2 'MariaDB did not start in time.'
+            exit 1
+          fi
+
+      - name: Initialize Database
+        run: |
+          mariadb -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS \`eco-concept_test\`;"
+          mariadb -h 127.0.0.1 -uroot -proot -e "CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';"
+          mariadb -h 127.0.0.1 -uroot -proot -e "GRANT ALL ON \`eco-concept_test\`.* TO 'root'@'%';"
+          mariadb -h 127.0.0.1 -uroot -proot -e "FLUSH PRIVILEGES;"
 
       - name: Set Environment Variables for Symfony Tests
         run: |
