@@ -28,34 +28,56 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
+        command: >
+          bash -c "
+          if [ ! -d /var/lib/mysql/mysql ]; then
+            echo 'Initializing database';
+            mysqld --initialize-insecure;
+            mysqld --skip-networking &
+            pid=\$!;
+            mysql=( mysql --protocol=socket -uroot );
+            for i in {30..0}; do
+              if echo 'SELECT 1' | \"\${mysql[@]}\" &> /dev/null; then
+                break;
+              fi;
+              echo 'MySQL init process in progress...';
+              sleep 1;
+            done;
+            if [ \$i = 0 ]; then
+              echo >&2 'MySQL init process failed.';
+              exit 1;
+            fi;
+            echo 'CREATE DATABASE IF NOT EXISTS \`eco-concept_test\` ;' | \"\${mysql[@]}\";
+            echo 'CREATE USER IF NOT EXISTS '\''root'\''@'\''%'\'' IDENTIFIED BY '\''root'\'' ;' | \"\${mysql[@]}\";
+            echo 'GRANT ALL ON \`eco-concept_test\`.* TO '\''root'\''@'\''%'\'' ;' | \"\${mysql[@]}\";
+            echo 'FLUSH PRIVILEGES ;' | \"\${mysql[@]}\";
+            kill \$pid;
+            wait \$pid;
+          fi;
+          exec mysqld;
+          "
 
     steps:
-      # 1. Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # 2. Set up Node.js for frontend
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
-      # 3. Install Dependencies for React Frontend
       - name: Install Frontend Dependencies
         working-directory: frontend
         run: npm install
 
-      # 4. Run React Tests
       - name: Run React Tests
         working-directory: frontend
         run: npm test -- --coverage
 
-      # 5. Build React App
       - name: Build React App
         working-directory: frontend
         run: npm run build
 
-      # 6. Set up PHP for Symfony Backend
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -63,25 +85,21 @@ jobs:
           extensions: mbstring, pdo_mysql
           coverage: xdebug
 
-      # 7. Install Composer Dependencies for Symfony
       - name: Install Composer Dependencies
         working-directory: backend
         run: composer install --no-interaction --prefer-dist
 
-      # 8. Set environment variables for Symfony tests
       - name: Set Environment Variables for Symfony Tests
         run: |
           echo "APP_ENV=test" >> $GITHUB_ENV
           echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/eco-concept_test?serverVersion=10.11.2-MariaDB&charset=utf8mb4" >> $GITHUB_ENV
 
-      # 9. Run Symfony Migrations for the Test Database
       - name: Run Symfony Migrations
         working-directory: backend
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:3306/eco-concept_test?serverVersion=10.11.2-MariaDB&charset=utf8mb4
         run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
-      # 10. Run PHPUnit Tests for Symfony
       - name: Run PHPUnit Tests
         working-directory: backend
         run: ./vendor/bin/phpunit --coverage-text
