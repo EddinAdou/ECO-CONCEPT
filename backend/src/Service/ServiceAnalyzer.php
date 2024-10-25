@@ -49,7 +49,7 @@ class ServiceAnalyzer
             // Determine the score, note, and appreciation based on the EcoIndex
             $noteData = $this->determinerNoteEtAppreciation($ecoIndex);
 
-            // Ajouter des valeurs pour l'empreinte carbone et l'eau si elles sont calculées
+            // Ajout des valeurs pour l'empreinte carbone et l'eau si elles sont calculées
             $empreinteCarbone = $poidsTotal * 0.2; // Exemple de calcul
             $empreinteEau = $poidsTotal * 0.1; // Exemple de calcul
 
@@ -61,8 +61,8 @@ class ServiceAnalyzer
                 'score' => $ecoIndex,
                 'empreinte_carbone' => $empreinteCarbone,
                 'empreinte_eau' => $empreinteEau,
-                'optimiser_images' => true, // ou calculer la valeur réelle
-                'reduire_requettes' => true // ou calculer la valeur réelle
+                'optimiser_images' => true,
+                'reduire_requettes' => true
             ], $noteData);
 
         } catch (\Exception $e) {
@@ -83,7 +83,7 @@ class ServiceAnalyzer
 
     private function calculerQuantileHttp(int $nbRequetes): float
     {
-        $requeteMaxOptimal = 30;
+        $requeteMaxOptimal = 25;
         return min(1, $nbRequetes / $requeteMaxOptimal);
     }
 
