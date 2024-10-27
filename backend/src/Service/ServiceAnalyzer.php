@@ -1,25 +1,41 @@
 <?php
 
+// src/Service/ServiceAnalyzer.php
 namespace App\Service;
+
 use GuzzleHttp\Client;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ServiceAnalyzer
 {
+    private $cache;
     private $client;
 
-    public function __construct()
+    public function __construct(CacheItemPoolInterface $cache, Client $client)
     {
-        // Initialize the Guzzle client for HTTP requests
-        $this->client = new Client();
+        $this->cache = $cache;
+        $this->client = $client;
     }
 
     public function analyser(string $url): array
     {
         try {
-            // Fetch the page with Guzzle
-            $response = $this->client->get($url);
-            $html = $response->getBody()->getContents();
+            $cacheKey = md5($url);
+
+            $cacheItem = $this->cache->getItem($cacheKey);
+
+            if (!$cacheItem->isHit()) {
+                $response = $this->client->get($url);
+                $html = $response->getBody()->getContents();
+
+                // Store the HTML content in the cache
+                $cacheItem->set($html);
+                $this->cache->save($cacheItem);
+            } else {
+                // Get the HTML content from the cache
+                $html = $cacheItem->get();
+            }
 
             // Use DomCrawler to analyze the HTML content
             $crawler = new Crawler($html);
@@ -49,9 +65,9 @@ class ServiceAnalyzer
             // Determine the score, note, and appreciation based on the EcoIndex
             $noteData = $this->determinerNoteEtAppreciation($ecoIndex);
 
-            // Ajout des valeurs pour l'empreinte carbone et l'eau si elles sont calculées
-            $empreinteCarbone = $poidsTotal * 0.2; // Exemple de calcul
-            $empreinteEau = $poidsTotal * 0.1; // Exemple de calcul
+            // Add values for carbon footprint and water if calculated
+            $empreinteCarbone = $poidsTotal * 0.2; // Example calculation
+            $empreinteEau = $poidsTotal * 0.1; // Example calculation
 
             return array_merge([
                 'poidsTotal' => $poidsTotal,
@@ -74,7 +90,6 @@ class ServiceAnalyzer
         }
     }
 
-
     private function calculerQuantileDOM(int $domElements): float
     {
         $domMaxOptimal = 700;
@@ -93,7 +108,6 @@ class ServiceAnalyzer
         return min(1, $poidsTotal / $poidsMaxOptimal);
     }
 
-
     private function calculerEcoIndex(float $quantileDOM, float $quantileHttp, float $quantileData): int
     {
         // Calcul de l'EcoIndex avec pondération
@@ -102,8 +116,6 @@ class ServiceAnalyzer
         // Arrondir le résultat à l'entier le plus proche
         return round($ecoIndex);
     }
-
-
 
     private function determinerNoteEtAppreciation(float $ecoIndex): array
     {
@@ -123,6 +135,4 @@ class ServiceAnalyzer
             return ['note' => 'G', 'appreciation' => 'Très mauvais'];
         }
     }
-
-
 }

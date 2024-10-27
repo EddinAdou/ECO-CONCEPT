@@ -4,7 +4,10 @@ framework:
     #csrf_protection: true
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    cache:
+        pools:
+            my_cache_pool:
+                adapter: cache.adapter.redis
 
     #esi: true
     #fragments: true

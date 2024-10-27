@@ -1,11 +1,6 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '16'
-
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
@@ -24,8 +19,28 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
-        controller_resolver:
-            auto_mapping: false
+        metadata_cache_driver:
+            type: pool
+            pool: doctrine.metadata_cache_pool
+        result_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool
+        query_cache_driver:
+            type: pool
+            pool: doctrine.query_cache_pool
+
+framework:
+    cache:
+        pools:
+            doctrine.metadata_cache_pool:
+                adapter: cache.adapter.redis
+                provider: 'redis://localhost'
+            doctrine.result_cache_pool:
+                adapter: cache.adapter.redis
+                provider: 'redis://localhost'
+            doctrine.query_cache_pool:
+                adapter: cache.adapter.redis
+                provider: 'redis://localhost'
 
 when@test:
     doctrine:

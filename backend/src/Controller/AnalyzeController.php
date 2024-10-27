@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use AllowDynamicProperties;
 use App\Service\ServiceAnalyzer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,17 +10,22 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\AnalyzeSite;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class AnalyzeController extends AbstractController
 {
     private ServiceAnalyzer $serviceAnalyzer;
     private EntityManagerInterface $entityManager;
+    private CacheInterface $cache;
 
-    public function __construct(ServiceAnalyzer $serviceAnalyzer, EntityManagerInterface $entityManager)
+    public function __construct(ServiceAnalyzer $serviceAnalyzer, EntityManagerInterface $entityManager, CacheInterface $cache)
     {
         $this->serviceAnalyzer = $serviceAnalyzer;
         $this->entityManager = $entityManager;
+        $this->cache = $cache;
     }
+
     #[Route('/api/analyze', name: 'api_analyze', methods: ['GET', 'POST'])]
     public function analyse(Request $request, LoggerInterface $logger): JsonResponse
     {
@@ -37,7 +41,11 @@ class AnalyzeController extends AbstractController
 
         $logger->info('URL analysée: ' . $url);
 
-        $result = $this->serviceAnalyzer->analyser($url);
+        // Check if the analysis result is cached
+        $result = $this->cache->get('analyze_' . md5($url), function (ItemInterface $item) use ($url) {
+            $item->expiresAfter(3600); // Cache for 1 hour
+            return $this->serviceAnalyzer->analyser($url);
+        });
 
         if (isset($result['error'])) {
             $logger->error('Erreur lors de l\'analyse: ' . $result['error']);
@@ -68,5 +76,4 @@ class AnalyzeController extends AbstractController
 
         return new JsonResponse($result);
     }
-
 }
