@@ -11,7 +11,7 @@ class SignupControllerTest extends WebTestCase
         $client = static::createClient();
 
         // Envoie d'une requête POST avec les données nécessaires pour l'inscription
-        $client->request('POST', '/signup', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/signup', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'firstname' => 'John',
             'lastname' => 'Doe',
             'email' => 'johndoe@example.com',
