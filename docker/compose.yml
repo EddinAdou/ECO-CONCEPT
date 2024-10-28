@@ -7,6 +7,7 @@ services:
       - ${DB_PORT}
     volumes:
       - database_data:/var/lib/mysql
+      - ./config/my.cnf:/etc/mysql/conf.d/my.cnf
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
