@@ -35,6 +35,11 @@ jobs:
           ini-values: date.timezone=UTC
           coverage: xdebug
 
+      - name: Remove Composer lock file and vendor directory
+        run: |
+          rm -f backend/composer.lock
+          rm -rf backend/vendor
+
       - name: Clear Symfony cache
         run: |
           cd backend
