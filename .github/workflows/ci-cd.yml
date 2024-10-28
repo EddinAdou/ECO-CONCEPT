@@ -19,7 +19,7 @@ jobs:
           MARiaDB_ROOT_PASSWORD: root Mot de passe pour root
           MARIADB_DATABASE: eco_concept_test
         options: >
-          --health-cmd="mysqladmin ping -u root -p$MARIADBQL_ROOT_PASSWORD" 
+          --health-cmd="mysqladmin ping -u root -p$MYSQL_ROOT_PASSWORD" 
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=3
