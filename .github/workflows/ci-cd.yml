@@ -16,13 +16,8 @@ jobs:
       database:
         image: mariadb:latest
         env:
-          MARiaDB_ROOT_PASSWORD: root Mot de passe pour root
+          MARIADB_ROOT_PASSWORD: root
           MARIADB_DATABASE: eco_concept_test
-        options: >
-          --health-cmd="mysqladmin ping -u root -p$MYSQL_ROOT_PASSWORD" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=3
         ports:
           - 3307:3306
         volumes:
@@ -40,14 +35,22 @@ jobs:
           ini-values: date.timezone=UTC
           coverage: xdebug
 
-      - name: Install Symfony dependencies
+      - name: Clear Symfony cache
         run: |
           cd backend
-          composer install
+          php bin/console cache:clear
+
+      - name: Remove vendor directory
+        run: rm -rf backend/vendor
+
+      - name: Reinstall Composer dependencies
+        run: |
+          cd backend
+          composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run Symfony tests
         env:
-          DATABASE_URL: "mysql://root:root_password@127.0.0.1:3306/eco_concept_test"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3307/eco_concept_test"
         run: |
           cd backend
           php bin/phpunit --testdox
