@@ -55,7 +55,7 @@ jobs:
           DATABASE_URL: "mysql://root:root@127.0.0.1:3307/eco_concept_test"
         run: |
           cd backend
-          php bin/phpunit --testdox
+          if [ -f "bin/phpunit" ]; then php bin/phpunit --testdox; else vendor/bin/phpunit --testdox; fi
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
