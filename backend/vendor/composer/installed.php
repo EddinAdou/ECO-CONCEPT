@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '446ffcd9c335639f33a11199bb47a12a0861b794',
+        'reference' => 'e0313b9fd3123dfbd31ebeefbed24b7c041de7fb',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '446ffcd9c335639f33a11199bb47a12a0861b794',
+            'reference' => 'e0313b9fd3123dfbd31ebeefbed24b7c041de7fb',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -618,6 +618,15 @@
             'install_path' => __DIR__ . '/../snc/redis-bundle',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'symfony/browser-kit' => array(
+            'pretty_version' => 'v7.1.6',
+            'version' => '7.1.6.0',
+            'reference' => '714becc9ba9b20115ffededc58f6b7172dc394cf',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/browser-kit',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'symfony/cache' => array(
             'pretty_version' => 'v7.1.6',

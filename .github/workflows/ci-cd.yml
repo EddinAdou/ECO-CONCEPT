@@ -50,6 +50,10 @@ jobs:
           cd backend
           php bin/console cache:clear
 
+      - name: Install Symfony BrowserKit
+        run: |
+          cd backend
+          composer require --dev symfony/browser-kit
       - name: Run Symfony tests
         env:
           DATABASE_URL: "mysql://root:root@127.0.0.1:3307/eco_concept_test"
