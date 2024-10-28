@@ -40,18 +40,15 @@ jobs:
           rm -f backend/composer.lock
           rm -rf backend/vendor
 
-      - name: Clear Symfony cache
-        run: |
-          cd backend
-          php bin/console cache:clear
-
-      - name: Remove vendor directory
-        run: rm -rf backend/vendor
-
-      - name: Reinstall Composer dependencies
+      - name: Install Composer dependencies
         run: |
           cd backend
           composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Clear Symfony cache (Optional)
+        run: |
+          cd backend
+          php bin/console cache:clear
 
       - name: Run Symfony tests
         env:
